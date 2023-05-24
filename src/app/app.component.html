@@ -1,0 +1,189 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+
+      <div class="row">
+        <div class="col-md-9">
+          <h3>Controle de Produtos</h3>
+          <p>Aplicação FrontEnd Angular integrada com API REST Spring Boot</p>
+        </div>
+        <div class="col-md-3 text-end">
+          <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#modal_cadastro">
+            Cadastrar Produto
+          </button>
+        </div>
+      </div>
+
+      <hr />
+
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th>Nome do produto</th>
+            <th>Descrição</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+            <th>Total</th>
+            <th>Data de Cadastro</th>
+            <th width="140">
+              Operações
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of produtos">
+            <td>{{p.nome | uppercase}}</td>
+            <td>{{p.descricao}}</td>
+            <td>{{p.preco | currency: 'R$ '}}</td>
+            <td>{{p.quantidade}}</td>
+            <td>{{p.total | currency : 'R$ '}}</td>
+            <td>{{p.dataCadastro | date : 'dd/MM/yyyy'}}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" 
+                data-bs-toggle="modal" data-bs-target="#modal_edicao"
+                (click)="exibirProduto(p)">
+                Editar
+              </button>
+              &nbsp;
+              <button class="btn btn-sm btn-danger" 
+                (click)="excluirProduto(p)">
+                Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="7">
+              Quantidade de produtos: {{produtos.length}}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<!-- modal para cadastro de produtos -->
+<div class="modal fade" id="modal_cadastro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro de Produtos</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form [formGroup]="formCadastro" (ngSubmit)="cadastrarProduto()">
+
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label>Nome do produto:</label>
+              <input type="text" class="form-control" formControlName="nome"/>
+              <div class="text-danger" *ngIf="form_cadastro.nome.touched && form_cadastro.nome.invalid">
+                Por favor, informe o nome do produto.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label>Preço:</label>
+              <input type="text" class="form-control" formControlName="preco"/>
+              <div class="text-danger" *ngIf="form_cadastro.preco.touched && form_cadastro.preco.invalid">
+                Por favor, informe o preço do produto.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label>Quantidade:</label>
+              <input type="number" class="form-control" min="1" formControlName="quantidade"/>
+              <div class="text-danger" *ngIf="form_cadastro.quantidade.touched && form_cadastro.quantidade.invalid">
+                Por favor, informe a quantidade do produto.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label>Descrição do produto:</label>
+              <textarea class="form-control" formControlName="descricao"></textarea>
+              <div class="text-danger" *ngIf="form_cadastro.descricao.touched && form_cadastro.descricao.invalid">
+                Por favor, informe a descrição do produto.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-md-12">
+                <input type="submit" class="btn btn-primary" 
+                       [disabled]="!formCadastro.valid"
+                       value="Realizar Cadastro"/>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal para cadastro de produtos -->
+<div class="modal fade" id="modal_edicao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Edição de Produto</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form [formGroup]="formEdicao" (ngSubmit)="atualizarProduto()">
+
+          <!-- campo oculto -->
+          <input type="hidden" formControlName="idProduto"/>
+
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label>Nome do produto:</label>
+              <input type="text" class="form-control" formControlName="nome"/>
+              <div class="text-danger" *ngIf="form_edicao.nome.touched && form_edicao.nome.invalid">
+                Por favor, informe o nome do produto.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label>Preço:</label>
+              <input type="text" class="form-control" formControlName="preco"/>
+              <div class="text-danger" *ngIf="form_edicao.preco.touched && form_edicao.preco.invalid">
+                Por favor, informe o preço do produto.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label>Quantidade:</label>
+              <input type="number" class="form-control" min="1" formControlName="quantidade"/>
+              <div class="text-danger" *ngIf="form_edicao.quantidade.touched && form_edicao.quantidade.invalid">
+                Por favor, informe a quantidade do produto.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label>Descrição do produto:</label>
+              <textarea class="form-control" formControlName="descricao"></textarea>
+              <div class="text-danger" *ngIf="form_edicao.descricao.touched && form_edicao.descricao.invalid">
+                Por favor, informe a descrição do produto.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-md-12">
+                <input type="submit" class="btn btn-primary" value="Salvar Alterações"
+                  [disabled]="!formEdicao.valid"/>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
